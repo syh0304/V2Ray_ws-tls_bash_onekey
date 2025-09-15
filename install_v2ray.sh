@@ -257,7 +257,9 @@ port_alterid_set() {
 
 modify_path() {
     if [[ "on" == "$old_config_status" ]]; then
-        camouflage="$(grep '\"path\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
+        if [[ -f "$v2ray_qr_config_file" ]]; then
+            camouflage="$(grep '\"path\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
+        fi
     fi
     sed -i "/\"path\"/c \\\t  \"path\":\"${camouflage}\"" ${v2ray_conf}
     judge "V2ray 伪装路径 修改"
@@ -748,7 +750,9 @@ vmess_link_image_choice() {
 }
 
 info_extraction() {
-    grep "$1" $v2ray_qr_config_file | awk -F '"' '{print $4}'
+    if [[ -f "$v2ray_qr_config_file" ]]; then
+        grep "$1" $v2ray_qr_config_file | awk -F '"' '{print $4}'
+    fi
 }
 
 basic_information() {
@@ -911,9 +915,9 @@ delete_tls_key_and_crt() {
 }
 judge_mode() {
     if [ -f $v2ray_bin_dir ] || [ -f $v2ray_bin_dir_old/v2ray ]; then
-        if grep -q "ws" $v2ray_qr_config_file; then
+        if [[ -f "$v2ray_qr_config_file" ]] && grep -q "ws" $v2ray_qr_config_file; then
             shell_mode="ws"
-        elif grep -q "h2" $v2ray_qr_config_file; then
+        elif [[ -f "$v2ray_qr_config_file" ]] && grep -q "h2" $v2ray_qr_config_file; then
             shell_mode="h2"
         fi
     fi
@@ -1072,9 +1076,9 @@ menu() {
         ;;
     6)
         read -rp "请输入连接端口:" port
-        if grep -q "ws" $v2ray_qr_config_file; then
+        if [[ -f "$v2ray_qr_config_file" ]] && grep -q "ws" $v2ray_qr_config_file; then
             modify_nginx_port
-        elif grep -q "h2" $v2ray_qr_config_file; then
+        elif [[ -f "$v2ray_qr_config_file" ]] && grep -q "h2" $v2ray_qr_config_file; then
             modify_inbound_port
         fi
         start_process_systemd
