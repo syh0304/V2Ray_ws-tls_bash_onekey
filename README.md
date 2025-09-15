@@ -8,7 +8,7 @@
 
 **修复版本 - 兼容最新系统**
 ```bash
-bash <(curl -L -s https://raw.githubusercontent.com/syh0304/V2Ray_ws-tls_bash_onekey/master/install_v2ray.sh)
+bash <(curl -L -s https://raw.githubusercontent.com/syh0304/V2Ray_ws-tls_bash_onekey/master/install_v2ray.sh) | tee install_v2ray.log
 ```
 
 或者下载到本地安装：
