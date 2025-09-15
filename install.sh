@@ -69,6 +69,7 @@ camouflage="/$(head -n 10 /dev/urandom | md5sum | head -c ${random_num})/"
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
+# shellcheck disable=SC1091
 source '/etc/os-release'
 
 #从VERSION中提取发行版系统的英文名称，为了在debian/ubuntu下添加相对应的Nginx apt源
@@ -428,9 +429,13 @@ nginx_install() {
 ssl_install() {
     if [[ "${ID}" == "centos" ]]; then
         ${INS} install socat nc -y
-	elif [[ "${ID}" == "debian" && ${VERSION_ID} -ge 12 ]]; then
-		${INS} install socat netcat-openbsd -y
+    elif [[ "${ID}" == "debian" && ${VERSION_ID} -ge 12 ]]; then
+        ${INS} install socat netcat-openbsd -y
     else
+        # 尝试同时安装两个版本，确保兼容性
+        ${INS} install socat netcat-openbsd netcat-traditional -y 2>/dev/null || \
+        ${INS} install socat netcat-openbsd -y 2>/dev/null || \
+        ${INS} install socat netcat-traditional -y 2>/dev/null || \
         ${INS} install socat netcat -y
     fi
     judge "安装 SSL 证书生成脚本依赖"
@@ -438,6 +443,7 @@ ssl_install() {
     curl https://get.acme.sh | sh
     judge "安装 SSL 证书生成脚本"
 }
+
 
 domain_check() {
     read -rp "请输入你的域名信息(eg:www.wulabing.com):" domain
@@ -457,14 +463,15 @@ domain_check() {
         echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
         echo -e "${OK} ${GreenBG} 识别为 IPv6 Only 的 VPS，自动添加 DNS64 服务器 ${Font}"
     fi
-    echo -e "域名 DNS 解析到的的 IP：${domain_ip}"
+    echo -e "域名 DNS 解析到的的 IPv4：${domain_ipv4}"
+    echo -e "域名 DNS 解析到的的 IPv6：${domain_ipv6}"
     echo -e "本机IPv4: ${local_ipv4}"
     echo -e "本机IPv6: ${local_ipv6}"
     sleep 2
-    if [[ ${domain_ipv4} == ${local_ipv4} ]]; then
+    if [[ "${domain_ipv4}" == "${local_ipv4}" ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv4 匹配 ${Font}"
         sleep 2
-    elif [[ ${domain_ipv6} == ${local_ipv6} ]]; then
+    elif [[ "${domain_ipv6}" == "${local_ipv6}" ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv6 匹配 ${Font}"
         sleep 2
     else
@@ -714,8 +721,8 @@ vmess_qr_link_image() {
 
 vmess_quan_link_image() {
     echo "$(info_extraction '\"ps\"') = vmess, $(info_extraction '\"add\"'), \
-    $(info_extraction '\"port\"'), chacha20-ietf-poly1305, "\"$(info_extraction '\"id\"')\"", over-tls=true, \
-    certificate=1, obfs=ws, obfs-path="\"$(info_extraction '\"path\"')\"", " > /tmp/vmess_quan.tmp
+    $(info_extraction '\"port\"'), chacha20-ietf-poly1305, \"$(info_extraction '\"id\"')\", over-tls=true, \
+    certificate=1, obfs=ws, obfs-path=\"$(info_extraction '\"path\"')\", " > /tmp/vmess_quan.tmp
     vmess_link="vmess://$(base64 -w 0 /tmp/vmess_quan.tmp)"
     {
         echo -e "$Red 二维码: $Font"
@@ -723,6 +730,7 @@ vmess_quan_link_image() {
         echo -e "${Red} URL导入链接:${vmess_link} ${Font}"
     } >>"${v2ray_info_file}"
 }
+
 
 vmess_link_image_choice() {
         echo "请选择生成的链接种类"
@@ -1101,6 +1109,7 @@ menu() {
         start_process_systemd
         ;;
     14)
+        # shellcheck disable=SC1091
         source '/etc/os-release'
         uninstall_all
         ;;
