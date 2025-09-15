@@ -4,7 +4,7 @@
 
 > Thanks for non-commercial open source development authorization by JetBrains
 
-## 🚀 快速安装（最新版本）
+## 🚀 快速安装（2025年9月最新版本）
 
 **修复版本 - 兼容最新系统**
 ```bash
