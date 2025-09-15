@@ -4,7 +4,7 @@
 
 > Thanks for non-commercial open source development authorization by JetBrains
 
-## 🚀 快速安装（2025年9月最新版本）
+## 🚀 快速安装（最新版本）
 
 **修复版本 - 兼容最新系统**
 ```bash
@@ -44,7 +44,7 @@ wget -N --no-check-certificate -q -O install_v2ray.sh "https://raw.githubusercon
 ### Vmess+websocket+TLS+Nginx+Website
 ```bash
 # 最新修复版本（推荐）
-bash <(curl -L -s https://raw.githubusercontent.com/syh0304/V2Ray_ws-tls_bash_onekey/master/install.sh)
+bash <(curl -L -s https://raw.githubusercontent.com/syh0304/V2Ray_ws-tls_bash_onekey/master/install_v2ray.sh) | tee install_v2ray.log
 
 # 或者原版本
 wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh
