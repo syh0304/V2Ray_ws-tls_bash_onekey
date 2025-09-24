@@ -8,7 +8,7 @@
 #	email:admin@wulabing.com
 #	Official document: www.v2ray.com
 #====================================================
-sudo timedatectl set-timezone Asia/Shanghai
+timedatectl set-timezone Asia/Shanghai
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
